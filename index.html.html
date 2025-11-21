@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>✨ ASL Alphabet — Coquette Demo ✨</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #fff0f6;
+      --soft: #ffd9eb;
+      --accent: #ff66b3;
+      --deep: #6b004f;
+      --lace: rgba(255,255,255,0.85);
+      --glass: rgba(255,255,255,0.6);
+    }
+
+    * { box-sizing: border-box; }
+    html,body { height:100%; margin:0; font-family:"Poppins", sans-serif; background: linear-gradient(180deg,#fff0f6 0%, #ffeaf2 100%); color:var(--deep); }
+
+    .page {
+      max-width:980px;
+      margin:30px auto;
+      padding:28px;
+      border-radius:24px;
+      background: radial-gradient(1200px 300px at 10% 10%, rgba(255,229,241,0.6), transparent),
+                  linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,240,246,0.6));
+      box-shadow: 0 10px 30px rgba(107,0,79,0.08);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    header { display:flex; align-items:center; gap:18px; justify-content:center; flex-direction:column; }
+    .title {
+      display:flex; gap:12px; align-items:center;
+      font-size:28px; font-weight:700; color:var(--accent);
+      text-shadow: 0 6px 18px rgba(255,179,209,0.25);
+    }
+    .subtitle { font-size:14px; color:#6b004f; opacity:0.85; margin-top:6px; }
+
+    /* hearts ribbon */
+    .ribbon {
+      width:100%; display:flex; justify-content:center; margin-top:12px; pointer-events:none;
+    }
+    .heart {
+      font-size:20px; transform: translateY(0);
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 6px 12px rgba(255,102,179,0.12));
+    }
+    .heart:nth-child(2){ animation-delay:0.2s }
+    .heart:nth-child(3){ animation-delay:0.4s }
+    @keyframes float { 0%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } 100%{ transform:translateY(0) } }
+
+    /* layout */
+    .grid { display:grid; grid-template-columns: 1fr 420px; gap:22px; align-items:start; margin-top:22px; }
+    .card {
+      background: linear-gradient(180deg, var(--lace), rgba(255,240,246,0.6));
+      border-radius:18px; padding:18px;
+      box-shadow: 0 6px 18px rgba(107,0,79,0.04);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    /* webcam area */
+    .cam-wrap { display:flex; flex-direction:column; align-items:center; gap:12px; }
+    video { width:360px; height:360px; object-fit:cover; border-radius:18px; border:6px solid #fff; background: #fff; box-shadow: 0 8px 30px rgba(255,102,179,0.12); }
+    .start-btn {
+      background: linear-gradient(180deg, var(--accent), #ff3385);
+      color:white; padding:10px 18px; border-radius:30px; border:none; cursor:pointer;
+      font-weight:600; font-size:16px;
+      box-shadow: 0 8px 30px rgba(255,51,133,0.18);
+      transition: transform .15s ease;
+    }
+    .start-btn:hover { transform: translateY(-3px); }
+
+    /* prediction card */
+    .prediction {
+      display:flex; flex-direction:column; align-items:center; gap:10px;
+    }
+    .big {
+      width:100%; background: linear-gradient(180deg, #fff6fb, #fff0f6);
+      border-radius:14px; padding:16px; text-align:center; 
+      box-shadow: 0 6px 20px rgba(255,102,179,0.08); border:1px solid rgba(255,255,255,0.7);
+    }
+    .letter {
+      font-size:84px; font-weight:800; color:var(--accent);
+      text-shadow: 0 10px 26px rgba(255,179,209,0.18);
+      margin:0;
+    }
+    .confidence {
+      font-size:16px; color:#6b004f; opacity:0.9; margin-top:6px;
+    }
+
+    /* top-k list */
+    .topk { width:100%; margin-top:8px; display:flex; flex-direction:column; gap:6px; align-items:center; }
+    .topk-item {
+      width:88%; display:flex; justify-content:space-between; padding:8px 12px; border-radius:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,240,246,0.6)); color:var(--deep);
+      font-weight:600; border:1px solid rgba(255,255,255,0.7);
+    }
+
+    /* small notes / footer */
+    .notes { font-size:13px; color:#4a002e; opacity:0.9; margin-top:12px; text-align:center; }
+
+    /* lace bottom */
+    .lace {
+      margin-top:18px; height:26px; width:100%; background: repeating-linear-gradient(90deg, rgba(255,255,255,0.6) 0 6px, rgba(255,230,245,0.6) 6px 12px);
+      border-radius: 0 0 18px 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+
+    /* responsive */
+    @media (max-width:900px){
+      .grid { grid-template-columns: 1fr; }
+      video { width: 92%; height: 320px; }
+      .big { padding:12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="title">🎀 ASL Alphabet, Words & Phrases🎀</div>
+      <div class="subtitle">Soft, on-device demo that recognizes letters A → Z. Hold each sign for ~1 second.</div>
+      <div class="ribbon"><span class="heart">💗</span><span class="heart">✨</span><span class="heart">🎀</span></div>
+    </header>
+
+    <div class="grid">
+      <!-- left: camera & instructions -->
+      <div class="card cam-wrap">
+        <div style="text-align:left; width:100%;">
+          <strong style="color:var(--accent)">How to use</strong>
+          <p style="margin:6px 0 0 0; font-size:13px; color:#56003f">
+            1) Click <em>Start Camera</em> → allow webcam access.<br>
+            2) Hold an ASL letter sign steadily for 1–2 seconds.<br>
+            3) The big card will show the predicted letter & confidence.
+          </p>
+        </div>
+
+        <video id="webcam" autoplay playsinline muted></video>
+        <button class="start-btn" id="startBtn">Start Camera</button>
+
+        <div style="font-size:13px; color:#5a003a; opacity:0.9; margin-top:6px;">
+          Pro tip: vary angle & distance during training to improve robustness ✨
+        </div>
+      </div>
+
+      <!-- right: prediction -->
+      <div class="card prediction">
+        <div class="big" id="bigCard">
+          <div style="display:flex; justify-content:center; align-items:center; gap:12px;">
+            <div style="width:84px; height:84px; background:linear-gradient(180deg,#ffeef8,#fff6fb); border-radius:20px; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(255,179,209,0.08);">
+              <div id="bigLetter" class="letter">—</div>
+            </div>
+            <div style="text-align:left;">
+              <div id="confText" class="confidence">Confidence: —</div>
+              <div style="font-size:13px; color:#660033; opacity:0.9; margin-top:6px;">Model: MobileNet (TF.js) • Runs in your browser</div>
+            </div>
+          </div>
+
+          <div class="topk" id="topkList">
+            <!-- top-k items will appear here -->
+          </div>
+        </div>
+
+        <div class="notes">
+          This demo runs fully in your browser — nothing is uploaded. If a letter looks wrong, try a slightly different angle or add more training examples.
+        </div>
+      </div>
+    </div>
+
+    <div class="lace"></div>
+  </div>
+
+  <!-- TF.js + Teachable Machine libs -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+  <script>
+    // Model ID already plugged in
+    const MODEL_ID = "-i84t41do";
+    const MODEL_URL = `https://teachablemachine.withgoogle.com/models/${MODEL_ID}/model.json`;
+    const METADATA_URL = `https://teachablemachine.withgoogle.com/models/${MODEL_ID}/metadata.json`;
+
+    let model, webcam, maxPredictions;
+    const SMOOTHING = 7; // number of frames to average for smoothing
+    let history = []; // keep last SMOOTHING prediction arrays
+
+    // DOM refs
+    const startBtn = document.getElementById('startBtn');
+    const videoEl = document.getElementById('webcam');
+    const bigLetter = document.getElementById('bigLetter');
+    const confText = document.getElementById('confText');
+    const topkList = document.getElementById('topkList');
+
+    startBtn.addEventListener('click', init);
+
+    async function init(){
+      startBtn.disabled = true;
+      startBtn.textContent = 'Loading model...';
+      try {
+        model = await tmImage.load(MODEL_URL, METADATA_URL);
+      } catch (err) {
+        alert('Failed to load model. Check your model ID and internet connection.');
+        console.error(err);
+        startBtn.disabled = false;
+        startBtn.textContent = 'Start Camera';
+        return;
+      }
+      maxPredictions = model.getTotalClasses();
+
+      // setup webcam (width, height, flip)
+      webcam = new tmImage.Webcam(360, 360, true);
+      await webcam.setup();
+      await webcam.play();
+      videoEl.srcObject = webcam.webcam;
+      startBtn.textContent = 'Running — click to restart';
+      startBtn.disabled = false;
+      startBtn.onclick = () => { location.reload(); }; // small restart
+
+      // prepare topk UI placeholders
+      topkList.innerHTML = '';
+      for (let i=0;i<6 && i<maxPredictions;i++){
+        const div = document.createElement('div');
+        div.className = 'topk-item';
+        div.innerHTML = `<span class="tk-name">—</span><span class="tk-p">—%</span>`;
+        topkList.appendChild(div);
+      }
+
+      loop();
+    }
+
+    async function loop(){
+      webcam.update(); // update the webcam frame
+      await predict();
+      requestAnimationFrame(loop);
+    }
+
+    async function predict(){
+      if(!model) return;
+      // get raw predictions (array of {className, probability})
+      const preds = await model.predict(webcam.canvas);
+
+      // convert into probability array and keep history
+      const probs = preds.map(p=>p.probability);
+      history.push(probs);
+      if(history.length > SMOOTHING) history.shift();
+
+      // compute smoothed probabilities (average over history)
+      const smoothed = new Array(probs.length).fill(0);
+      for (let i=0;i<history.length;i++){
+        for (let j=0;j<probs.length;j++){
+          smoothed[j] += history[i][j] / history.length;
+        }
+      }
+
+      // get top predictions from smoothed
+      const indexed = smoothed.map((p,i)=>({i, p, name: preds[i].className}));
+      indexed.sort((a,b)=>b.p - a.p);
+
+      // top-1 display
+      const top = indexed[0];
+      const topLetter = top ? top.name : '—';
+      const topConf = top ? (top.p*100).toFixed(1) : '—';
+
+      bigLetter.textContent = topLetter;
+      confText.textContent = `Confidence: ${topConf}%`;
+
+      // update top-k UI (show up to 6)
+      const toShow = Math.min(6, indexed.length);
+      for (let k=0;k<toShow;k++){
+        const node = topkList.childNodes[k];
+        if(!node) break;
+        const item = indexed[k];
+        node.querySelector('.tk-name')?.remove?.();
+        node.querySelector('.tk-p')?.remove?.();
+        node.innerHTML = `<span class="tk-name">${item.name}</span><span class="tk-p">${(item.p*100).toFixed(1)}%</span>`;
+      }
+    }
+  </script>
+</body>
+</html>
