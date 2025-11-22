@@ -121,7 +121,7 @@
   <div class="page">
     <header>
       <div class="title">🎀 ASL Alphabet, Words & Phrases🎀</div>
-      <div class="subtitle">Soft, on-device demo that recognizes letters A → Z. Hold each sign for ~1 second.</div>
+      <div class="subtitle">Soft, on-device demo that recognizes letters A → Z, common words & phrases. Hold each sign for ~1 second.</div>
       <div class="ribbon"><span class="heart">💗</span><span class="heart">✨</span><span class="heart">🎀</span></div>
     </header>
 
@@ -141,7 +141,7 @@
         <button class="start-btn" id="startBtn">Start Camera</button>
 
         <div style="font-size:13px; color:#5a003a; opacity:0.9; margin-top:6px;">
-          Pro tip: vary angle & distance during training to improve robustness ✨
+          Pro tip: vary angle & distance if its not working ✨
         </div>
       </div>
 
@@ -164,7 +164,7 @@
         </div>
 
         <div class="notes">
-          This demo runs fully in your browser — nothing is uploaded. If a letter looks wrong, try a slightly different angle or add more training examples.
+          This demo runs fully in your browser — nothing is uploaded. If a letter looks wrong, try a slightly different angle
         </div>
       </div>
     </div>
@@ -179,8 +179,12 @@
   <script>
     // Model ID already plugged in
     const MODEL_ID = "-i84t41do";
-    const MODEL_URL = `https://teachablemachine.withgoogle.com/models/${MODEL_ID}/model.json`;
-    const METADATA_URL = `https://teachablemachine.withgoogle.com/models/${MODEL_ID}/metadata.json`;
+    const MODEL_URL = "model.json";
+const METADATA_URL = "metadata.json";
+
+async function loadModel() {
+    model = await tmImage.load(MODEL_URL, METADATA_URL);
+    maxPredictions = model.getTotalClasses();
 
     let model, webcam, maxPredictions;
     const SMOOTHING = 7; // number of frames to average for smoothing
@@ -280,3 +284,4 @@
   </script>
 </body>
 </html>
+
